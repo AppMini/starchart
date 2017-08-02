@@ -1,0 +1,20 @@
+* {
+  padding: 0px;
+  margin: 0px;
+  box-sizing: border-box;
+}
+
+body, html {
+  width: 100%;
+  height: 100%;
+  background-image: url("../stardust.png");
+  background-size: cover;
+}
+
+#star-container {
+  text-align: center;
+}
+
+.icon-star {
+  margin: 16px;
+}
