@@ -2,6 +2,9 @@
     (:require
       [reagent.core :as r]))
 
+(def colors ["#F80000" "#F77900" "#F6E800" "#00F700" "#007EF9" "#7E00F9"])
+(def number-colors ["#fff" "#333" "#333" "#333" "#fff" "#fff"])
+
 (defn star [r]
   [:svg
    {:viewBox "0 0 560 560"
@@ -27,10 +30,17 @@
            "l-88.969,46.781c-15.063,7.906-33.313,6.594-47.078-3.406c-13.781-10-20.672-26.953-17.797-43.734l17-99.062"
            "c2.484-14.5-2.328-29.297-12.859-39.578L13.5,240.584C1.313,228.709-3.078,210.928,2.188,194.756"
            "c5.266-16.188,19.25-27.984,36.094-30.438l99.484-14.453c14.547-2.109,27.141-11.266,33.656-24.453L215.906,35.272z")
-      :fill "#fff"
+      :fill (get colors (mod r (count colors)))
       :filter "url(#glowfilter)"}]
-    [:text {:x "256" :y "320" :text-anchor "middle" :font-size "128" :font-family "Arial" :fill "#333" :stroke "#333" :stroke-width "12" :stroke-linejoin "round" :stroke-linecap "round"} r]]])
-
+    [:text {:x "256" :y "320"
+            :text-anchor "middle" 
+            :font-size "128" 
+            :font-family "Arial" 
+            :fill (get number-colors (mod r (count number-colors))) 
+            :stroke (get number-colors (mod r (count number-colors))) 
+            :stroke-width "12" 
+            :stroke-linejoin "round" 
+            :stroke-linecap "round"} r]]])
 
 ;; -------------------------
 ;; Views
