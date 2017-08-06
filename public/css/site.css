@@ -2,6 +2,7 @@
   padding: 0px;
   margin: 0px;
   box-sizing: border-box;
+  font-family: Arial;
 }
 
 body, html {
@@ -13,6 +14,35 @@ body, html {
 
 #star-container {
   text-align: center;
+}
+
+#select-container, #admin-container {
+  text-align: center;
+  font-size: 1.5em;
+}
+
+#admin-container input, #admin-container button {
+  font-size: 2em;
+  margin: 0.5em;
+  margin-top: 2em;
+  width: 3em;
+}
+
+#select-container {
+  color: white;
+}
+
+#select-container input, #select-container button {
+  font-size: 2em;
+  margin: 0.5em;
+}
+
+#select-container button {
+  width: 3em;
+}
+
+#select-container input {
+  padding: 0.25em;
 }
 
 .icon-star {

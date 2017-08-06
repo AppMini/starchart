@@ -1,9 +1,13 @@
 (ns starchart.core
     (:require
-      [reagent.core :as r]))
+      [reagent.core :as r]
+      [cemerick.url :refer [url]]))
 
 (def colors ["#F80000" "#F77900" "#F6E800" "#00F700" "#007EF9" "#7E00F9"])
 (def number-colors ["#fff" "#333" "#333" "#333" "#fff" "#fff"])
+
+(defn redirect [u]
+  (set! (.. js/document -location -href) u))
 
 (defn star [r]
   [:svg
@@ -45,14 +49,35 @@
 ;; -------------------------
 ;; Views
 
-(defn home-page [starcount]
+(defn stars-page [starcount]
   [:div#star-container (for [r (range @starcount)] (with-meta [star r] {:key r}))])
+
+(defn admin-page [starcount]
+  (fn []
+    [:div#admin-container
+     [:input {:on-change #(swap! starcount (int (-> % .-target .-value))) :type "number" :value @starcount}]
+     [:button {:on-click #(swap! starcount inc)} "+"]]))
+
+(defn select-page [url-parsed]
+  (let [params (r/atom {:admin false :name ""})]
+    (fn []
+      [:div#select-container
+       [:p [:input {:on-change #(swap! params assoc :name (-> % .-target .-value)) :value (@params :name) :placeholder "Kid's name"}]]
+       [:p [:label [:input {:type "checkbox" :on-change #(swap! params assoc :admin (-> % .-target .-checked)) :value (@params :admin)}] "Admin page"]]
+       [:button {:on-click #(redirect (str url-parsed "?" (@params :name) (if (@params :admin) "&admin" ""))) :disabled (= (@params :name) "")} "Go"]])))
 
 ;; -------------------------
 ;; Initialize app
 
 (defn mount-root []
-  (r/render [home-page (atom 50)] (.getElementById js/document "app")))
+  (let [u (url (.. js/document -location -href))
+        kid-name (-> u :query first first)
+        app-el (.getElementById js/document "app")]
+    (if kid-name
+      (if (-> u :query (get "admin"))
+        (r/render [admin-page (atom 50)] app-el)   
+        (r/render [stars-page (atom 50)] app-el))
+      (r/render [select-page u] app-el))))
 
 (defn init! []
   (mount-root))
