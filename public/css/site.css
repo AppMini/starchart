@@ -21,6 +21,10 @@ body, html {
   font-size: 1.5em;
 }
 
+#admin-container p {
+  color: #999;
+}
+
 #admin-container input, #admin-container button {
   font-size: 2em;
   margin: 0.5em;

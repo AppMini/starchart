@@ -56,7 +56,8 @@
   (fn []
     [:div#admin-container
      [:input {:on-change #(swap! starcount (int (-> % .-target .-value))) :type "number" :value @starcount}]
-     [:button {:on-click #(swap! starcount inc)} "+"]]))
+     [:button {:on-click #(swap! starcount inc)} "+"]
+     [:p "Add to homescreen for easy access."]]))
 
 (defn select-page [url-parsed]
   (let [params (r/atom {:admin false :name ""})]
