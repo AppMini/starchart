@@ -1,7 +1,9 @@
 (ns starchart.core
     (:require
       [reagent.core :as r]
-      [cemerick.url :refer [url]]))
+      [cemerick.url :refer [url]]
+      [ajax.core :refer [GET POST]]
+      [goog.functions]))
 
 (def colors ["#F80000" "#F77900" "#F6E800" "#00F700" "#007EF9" "#7E00F9"])
 (def number-colors ["#fff" "#333" "#333" "#333" "#fff" "#fff"])
@@ -44,7 +46,7 @@
             :stroke (get number-colors (mod r (count number-colors))) 
             :stroke-width "12" 
             :stroke-linejoin "round" 
-            :stroke-linecap "round"} r]]])
+            :stroke-linecap "round"} (inc r)]]])
 
 ;; -------------------------
 ;; Views
@@ -53,35 +55,80 @@
   [:div#star-container (for [r (range @starcount)] (with-meta [star r] {:key r}))])
 
 (defn admin-page [starcount]
-  (fn []
-    [:div#admin-container
-     [:input {:on-change #(swap! starcount (int (-> % .-target .-value))) :type "number" :value @starcount}]
-     [:button {:on-click #(swap! starcount inc)} "+"]
-     [:p "Add to homescreen for easy access."]]))
+  [:div#admin-container
+   [:input {:on-change #(reset! starcount (int (-> % .-target .-value)))
+            :type "number"
+            :value @starcount}]
+   [:button {:on-click #(swap! starcount inc)} "+"]
+   [:p "Add to homescreen for easy access."]])
 
 (defn select-page [url-parsed]
   (let [params (r/atom {:admin false :name ""})]
     (fn []
       [:div#select-container
-       [:p [:input {:on-change #(swap! params assoc :name (-> % .-target .-value)) :value (@params :name) :placeholder "Kid's name"}]]
-       [:p [:label [:input {:type "checkbox" :on-change #(swap! params assoc :admin (-> % .-target .-checked)) :value (@params :admin)}] "Admin page"]]
-       [:button {:on-click #(redirect (str url-parsed "?" (@params :name) (if (@params :admin) "&admin" ""))) :disabled (= (@params :name) "")} "Go"]])))
+       [:p [:input {:on-change #(swap! params assoc :name (-> % .-target .-value))
+                    :value (@params :name)
+                    :placeholder "Kid's name"}]]
+       [:p [:label [:input {:type "checkbox"
+                            :on-change #(swap! params assoc :admin (-> % .-target .-checked))
+                            :value (@params :admin)}] "Admin page"]]
+       [:button {:on-click #(redirect (str url-parsed "?" (@params :name) (if (@params :admin) "&admin" "")))
+                 :disabled (= (@params :name) "")} "Go"]])))
+
+; get a list of all kids
+;(GET "/server"
+;     {:handler (fn [d] (print "GET1 result" d))
+;      :response-format :json})
+
+(defn poll-server [starcount kid-name again?]
+  (GET (str "/server?name=" kid-name)
+       {:handler (fn [d]
+                   (print "poll result" d)
+                   (reset! starcount (int d))
+                   (when again?
+                     (js/setTimeout
+                       (partial poll-server starcount kid-name again?)
+                       (* 1000 60 5))))
+        :response-format :json}))
+
+(defn send-value [kid-name value]
+  (POST "/server"
+        {:params {:name kid-name
+                  :content (str value)}
+         :handler (fn [d] (print "Updated" d))
+         :format :raw
+         :response-format :json
+         :vec-strategy :rails}))
+
+(def debounced-send-value (goog.functions.debounce send-value 2000))
+
+(defn post-atom-changes [starcount kid-name]
+  (add-watch starcount
+             :stars
+             (fn [k a old-state new-state]
+               (debounced-send-value kid-name new-state))))
 
 ;; -------------------------
 ;; Initialize app
 
 (defn mount-root []
-  (let [u (url (.. js/document -location -href))
+  (let [starcount (r/atom 50)
+        u (url (.. js/document -location -href))
         params (-> u :query keys)
         kid-name (first (remove #(= "admin" %) params))
         admin? (contains? (set params) "admin")
         app-el (.getElementById js/document "app")]
     (if kid-name
       (do
+        (poll-server starcount kid-name false)
         (set! (. js/document -title) kid-name)
         (if admin?
-          (r/render [admin-page (atom 50)] app-el)
-          (r/render [stars-page (atom 50)] app-el)))
+          (do
+            (post-atom-changes starcount kid-name)
+            (r/render [admin-page starcount] app-el))
+          (do
+            (poll-server starcount kid-name true)
+            (r/render [stars-page starcount] app-el))))
       (r/render [select-page u] app-el))))
 
 (defn init! []

@@ -1,0 +1,70 @@
+; it's PHP jim, but not as we know it.
+(def! WRITE-FLAGS 2) ; LOCK_EX
+(def! DATA-DIR "../data/")
+
+(def! response
+  (fn* [content-type content]
+       (do
+         (! header (str "Content-type: " content-type))
+         (println content))))
+
+(def! json-response
+  (fn* [data]
+       (response "application/json" (! json_encode data))))
+
+(def! throw-error
+  (fn* [c e]
+       (do (! header "Content-type: application/json") 
+           (! http_response_code c)
+           (println (! json_encode {"error" e}))
+           (php* "exit(1);"))))
+
+(def! console-dump
+  (fn* [v]
+       (! error_log (! print_r v true))))
+
+(def! get-valid
+  (fn* [m k]
+       (let* [v (get m k)]
+         (if v (if (not (= v "")) v)))))
+
+(def! filter-for-datafile
+  (fn* [files ext]
+       (let* [l (! strlen ext)]
+         (vals (! array_filter
+                  files
+                  (fn* [f]
+                       (= (! substr f (* -1 l) l) ext)))))))
+
+(def! list-data-file-keys
+  (fn* [data-dir ext]
+       (let* [files (! scandir data-dir)
+              data-files (filter-for-datafile files ext)]
+         (map (fn* [f] (! substr f 0 (* -1 (! strlen ext)))) data-files))))
+
+(def! process-http-request
+  (fn* [vars]
+       (let* [data-file-key (or (get ($ "_GET") "name") (get ($ "_POST") "name"))
+              data-file-keys (list-data-file-keys DATA-DIR ".json")
+              filename (str DATA-DIR data-file-key ".json")
+              contents (get ($ "_POST") "content")]
+         (cond
+           ; a get request always returns a list of available CSVs
+           (= (get vars "REQUEST_METHOD") "GET")
+           (if (not (nil? data-file-key))
+             (response "application/json" (! file_get_contents filename))
+             (json-response data-file-keys))
+
+           ; a POST request replaces the data file
+           (= (get vars "REQUEST_METHOD") "POST")
+           (if (! file_put_contents filename contents WRITE-FLAGS)
+             (json-response (! json_decode contents))
+             (json-response false))))))
+
+; *** main entry point *** ;
+
+(if (! is_dir DATA-DIR)
+  (process-http-request ($ "_SERVER"))
+  ;(json-response {"beep" "hello"})
+  (throw-error 404 "Data directory does not exist."))
+
