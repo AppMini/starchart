@@ -71,12 +71,16 @@
 
 (defn mount-root []
   (let [u (url (.. js/document -location -href))
-        kid-name (-> u :query first first)
+        params (-> u :query keys)
+        kid-name (first (remove #(= "admin" %) params))
+        admin? (contains? (set params) "admin")
         app-el (.getElementById js/document "app")]
     (if kid-name
-      (if (-> u :query (get "admin"))
-        (r/render [admin-page (atom 50)] app-el)   
-        (r/render [stars-page (atom 50)] app-el))
+      (do
+        (set! (. js/document -title) kid-name)
+        (if admin?
+          (r/render [admin-page (atom 50)] app-el)
+          (r/render [stars-page (atom 50)] app-el)))
       (r/render [select-page u] app-el))))
 
 (defn init! []
