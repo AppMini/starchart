@@ -11,8 +11,11 @@ pom.xml.asc
 /resources/public/js
 /public/js/app.js
 /public/js/out
+/public/js/release
 /out
 /.repl
 *.log
 /.env
 public/data/*.json
+.*.swp
+workspace
