@@ -81,7 +81,7 @@
 ;      :response-format :json})
 
 (defn poll-server [starcount kid-name again?]
-  (GET (str "/server?name=" kid-name)
+  (GET (str "server/index.php?name=" kid-name)
        {:handler (fn [d]
                    (print "poll result" d)
                    (reset! starcount (int d))
@@ -92,7 +92,7 @@
         :response-format :json}))
 
 (defn send-value [kid-name value]
-  (POST "/server"
+  (POST "server/index.php"
         {:params {:name kid-name
                   :content (str value)}
          :handler (fn [d] (print "Updated" d))
