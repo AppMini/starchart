@@ -80,14 +80,15 @@
 ;     {:handler (fn [d] (print "GET1 result" d))
 ;      :response-format :json})
 
-(defn poll-server [starcount kid-name again?]
+(defn poll-server [starcount kid-name callback]
   (GET (str "server/index.php?name=" kid-name)
        {:handler (fn [d]
                    (print "poll result" d)
                    (reset! starcount (int d))
-                   (when again?
+                   (if callback
+                     (callback)
                      (js/setTimeout
-                       (partial poll-server starcount kid-name again?)
+                       (partial poll-server starcount kid-name)
                        (* 1000 60 5))))
         :response-format :json}))
 
@@ -120,15 +121,17 @@
         app-el (.getElementById js/document "app")]
     (if kid-name
       (do
-        (poll-server starcount kid-name false)
         (set! (. js/document -title) kid-name)
-        (if admin?
-          (do
-            (post-atom-changes starcount kid-name)
-            (r/render [admin-page starcount] app-el))
-          (do
-            (poll-server starcount kid-name true)
-            (r/render [stars-page starcount] app-el))))
+        (poll-server starcount
+                     kid-name
+                     (fn []
+                       (if admin?
+                         (do
+                           (post-atom-changes starcount kid-name)
+                           (r/render [admin-page starcount] app-el))
+                         (do
+                           (poll-server starcount kid-name)
+                           (r/render [stars-page starcount] app-el))))))
       (r/render [select-page u] app-el))))
 
 (defn init! []
