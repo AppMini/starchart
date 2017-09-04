@@ -1,0 +1,13 @@
+CACHE MANIFEST
+# 2017-09-04:v1
+
+CACHE:
+index.html
+icon.png
+stardust.png
+css/site.css
+js/app.js
+
+NETWORK:
+server/index.php
+server
