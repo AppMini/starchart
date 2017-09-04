@@ -30,6 +30,7 @@ body, html {
   margin: 0.5em;
   margin-top: 2em;
   width: 3em;
+  max-width: 80%;
 }
 
 #select-container {
@@ -47,6 +48,7 @@ body, html {
 
 #select-container input {
   padding: 0.25em;
+  max-width: 80%;
 }
 
 .icon-star {
