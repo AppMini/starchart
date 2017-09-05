@@ -56,11 +56,12 @@
 
 (defn admin-page [starcount]
   [:div#admin-container
+   [:button {:on-click #(swap! starcount inc)} "+"]
    [:input {:on-change #(reset! starcount (int (-> % .-target .-value)))
             :type "number"
             :value @starcount}]
-   [:button {:on-click #(swap! starcount inc)} "+"]
-   [:p "Add to homescreen for easy access."]])
+   (if (not (.-matches (.matchMedia js/window "(display-mode: standalone)")))
+     [:p "Add to homescreen for easy access."])])
 
 (def show-again
   (goog.functions.debounce #(swap! % assoc :show true) 500))

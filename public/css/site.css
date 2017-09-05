@@ -36,10 +36,6 @@ input {
   text-align: center;
 }
 
-#select-container p {
-  margin-bottom: 2em;
-}
-
 #select-container, #admin-container {
   text-align: center;
   font-size: 1.5em;
@@ -55,10 +51,16 @@ input {
   margin-top: 2em;
   width: 3em;
   max-width: 80%;
+  display: inline-block;
+  padding: 0.15em;
 }
 
 #select-container {
   color: white;
+}
+
+#select-container p {
+  margin-bottom: 2em;
 }
 
 #select-container input, #select-container button {
