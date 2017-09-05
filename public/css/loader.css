@@ -1,22 +1,20 @@
 /*** loader animation ***/
 
 #loader > div {
-  width: 50px;
-  height: 50px;
-  background: #0C9;
-  border: 1px solid #0C9;
   -webkit-animation: square-spin 3s 0s cubic-bezier(.09,.57,.49,.9) infinite;
   animation: square-spin 3s 0s cubic-bezier(.09,.57,.49,.9) infinite;
+  color: #0c9;
+  width: 100px;
 }
 
 #loader {
   position: absolute;
   left: 50%;
   top: 50%;
-  margin-left: -25px;
-  margin-top: -25px;
+  margin-top: -50px;
+  margin-left: -50px;
   text-align: center;
-  font-size: 50px;
+  font-size: 5em;
 }
 
 @keyframes square-spin {
