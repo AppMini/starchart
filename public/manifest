@@ -11,3 +11,5 @@ icon.png
 stardust.png
 css/loader.css
 css/site.css
+
+# note: js/app.js is added during `make` build

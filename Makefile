@@ -1,10 +1,14 @@
 STATIC=index.html stardust.png icon.png server/* css/*
 STATICSRC=$(foreach s,$(STATIC),public/$(s))
 
-all: release release/data release/index.html release/js/app.js
+all: release release/manifest release/data release/index.html release/js/app.js
 
 release/index.html: $(STATICSRC)
 	cd public && rsync -avz -R $(STATIC) ../release && touch ../release/index.html
+
+release/manifest: public/manifest
+	cp $< $@
+	echo "js/app.js" >> $@
 
 release:
 	mkdir -p release
@@ -18,4 +22,5 @@ release/js/app.js: src/starchart/*.cljs project.clj env/prod/cljs/starchart/prod
 .PHONY: clean
 
 clean:
+	lein clean
 	rm -rf release
