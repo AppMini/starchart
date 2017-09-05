@@ -5,6 +5,7 @@ all: release release/manifest release/data release/index.html release/js/app.js
 
 release/index.html: $(STATICSRC)
 	cd public && rsync -avz -R $(STATIC) ../release && touch ../release/index.html
+	chmod -R go-w release
 
 release/manifest: public/manifest
 	cp $< $@
