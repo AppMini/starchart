@@ -1,4 +1,8 @@
-Single page web application to keep track of your childrens' reward stars.
+Keep track of your childrens' reward stars.
+
+Self-hosted single-page web application.
+
+Backend is PHP.
 
 ![Screenshot 1](./screenshots/Screenshot_20170905-194351.png)
 
