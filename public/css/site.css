@@ -12,6 +12,13 @@ body, html {
   background-size: cover;
 }
 
+a {
+  color: #0c9;
+}
+
+a:hover {
+}
+
 button {
   border: 1px solid #0c9;
   background-color: #0c9;
@@ -27,6 +34,10 @@ input {
 
 #star-container {
   text-align: center;
+}
+
+#select-container p {
+  margin-bottom: 2em;
 }
 
 #select-container, #admin-container {

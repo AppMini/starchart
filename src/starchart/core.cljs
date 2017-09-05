@@ -62,25 +62,27 @@
    [:button {:on-click #(swap! starcount inc)} "+"]
    [:p "Add to homescreen for easy access."]])
 
+(def show-again
+  (goog.functions.debounce #(swap! % assoc :show true) 500))
+
 (defn select-page [url-parsed]
-  (let [params (r/atom {:admin false :name ""})]
+  (let [params (r/atom {:last 0 :name ""})]
     (fn []
       [:div#select-container
-       [:p [:input {:on-change #(swap! params assoc :name (-> % .-target .-value))
+       [:p [:input {:on-change (fn [ev] (swap! params assoc :name (-> ev .-target .-value) :show false) (show-again params))
                     :value (@params :name)
                     :placeholder "Kid's name"}]]
-       [:p [:label [:input {:type "checkbox"
-                            :on-change #(swap! params assoc :admin (-> % .-target .-checked))
-                            :value (@params :admin)}] "Admin page"]]
-       [:button {:on-click #(redirect (str url-parsed "?" (@params :name) (if (@params :admin) "&admin" "")))
-                 :disabled (= (@params :name) "")} "Go"]])))
+       (when (and (not= (@params :name) "") (@params :show))
+         [:div#links
+          [:p [:a {:href (str url-parsed "?" (@params :name))} (str "Show star chart for " (@params :name))]]
+          [:p [:a {:href (str url-parsed "?" (@params :name) "&admin")} (str "Edit star count for " (@params :name))]]])])))
 
 ; get a list of all kids
 ;(GET "/server"
 ;     {:handler (fn [d] (print "GET1 result" d))
 ;      :response-format :json})
 
-(defn poll-server [starcount kid-name callback]
+(defn poll-server [starcount kid-name & [callback]]
   (GET (str "server/index.php?name=" kid-name)
        {:handler (fn [d]
                    (print "poll result" d)
