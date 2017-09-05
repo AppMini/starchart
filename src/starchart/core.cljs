@@ -54,8 +54,9 @@
 (defn stars-page [starcount]
   [:div#star-container (for [r (range @starcount)] (with-meta [star r] {:key r}))])
 
-(defn admin-page [starcount]
+(defn admin-page [starcount kid-name]
   [:div#admin-container
+   [:p kid-name]
    [:button {:on-click #(swap! starcount inc)} "+"]
    [:input {:on-change #(reset! starcount (int (-> % .-target .-value)))
             :type "number"
@@ -131,7 +132,7 @@
                        (if admin?
                          (do
                            (post-atom-changes starcount kid-name)
-                           (r/render [admin-page starcount] app-el))
+                           (r/render [admin-page starcount kid-name] app-el))
                          (do
                            (poll-server starcount kid-name)
                            (r/render [stars-page starcount] app-el))))))
