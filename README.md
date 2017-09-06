@@ -4,6 +4,8 @@ Self-hosted single-page web application.
 
 Backend is PHP.
 
+[Download the latest release](https://github.com/chr15m/starchart/releases/download/v1.0/starchart-v1.0.zip).
+
 ![Screenshot 1](./screenshots/Screenshot_20170905-194351.png)
 
 ![Screenshot 2](./screenshots/Screenshot_20170905-194450.png)
@@ -20,7 +22,11 @@ Backend is PHP.
 
 ### Install ###
 
- * Copy the contents of the [release](./release) folder up to a PHP enabled server and then browse to the folder.
+ * Unzip [the release](https://github.com/chr15m/starchart/releases/download/v1.0/starchart-v1.0.zip) and copy the contents of the folder up to a PHP enabled server.
+ * Browse to the folder.
+
+Hints:
+
  * Add the admin page for each kid to your phone's home screen for quick access.
  * Add the star chart for each kid to their devices or a screen somewhere in your home.
 
