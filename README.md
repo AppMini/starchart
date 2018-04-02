@@ -6,6 +6,8 @@ Backend is PHP.
 
 [Download the latest release](https://github.com/chr15m/starchart/releases/download/v1.0/starchart-v1.0.zip).
 
+![Screenshot 7](./screenshots/Screenshot_20170905-194610.png)
+
 ![Screenshot 1](./screenshots/Screenshot_20170905-194351.png)
 
 ![Screenshot 2](./screenshots/Screenshot_20170905-194450.png)
@@ -17,8 +19,6 @@ Backend is PHP.
 ![Screenshot 5](./screenshots/Screenshot_20170905-194525.png)
 
 ![Screenshot 6](./screenshots/Screenshot_20170905-194536.png)
-
-![Screenshot 7](./screenshots/Screenshot_20170905-194610.png)
 
 ### Install ###
 
